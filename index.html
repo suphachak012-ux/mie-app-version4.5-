@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#8e2de2"> <title>MIE Wallet - Premium</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+</head>
+<body>
+    <div class="mobile-frame">
+        <header class="main-header">
+            <div class="header-content">
+                <div class="logo-area">
+                    <div class="logo-icon"><ion-icon name="wallet"></ion-icon></div>
+                    <span class="app-name">MIE</span>
+                </div>
+                <div class="user-greeting">
+                    <span>สวัสดี,</span>
+                    <strong id="header-username">...</strong>
+                </div>
+            </div>
+            <svg class="header-waves" viewBox="0 0 1440 320" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#ffffff" fill-opacity="1" d="M0,224L48,213.3C96,203,192,181,288,181.3C384,181,480,203,576,224C672,245,768,267,864,250.7C960,235,1056,181,1152,165.3C1248,149,1344,171,1392,181.3L1440,192L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"></path>
+            </svg>
+        </header>
+
+        <main class="content-body">
+            <div id="home-page" class="page-section active">
+                <div id="status-area"></div> 
+                
+                <div class="section-header">
+                    <h3>ภาพรวมค่าใช้จ่าย</h3>
+                </div>
+                
+                <div class="chart-card-premium">
+                    <canvas id="myChart"></canvas>
+                </div>
+
+                <div class="section-header">
+                    <h3>รายการล่าสุด</h3>
+                    <button class="btn-see-all" onclick="changePage('summary')">ดูทั้งหมด</button>
+                </div>
+                <div id="item-list" class="transaction-list"></div>
+                <div class="spacer-bottom"></div>
+            </div>
+
+            <div id="summary-page" class="page-section">
+                <h2 class="page-title">สรุปยอดประจำปี</h2>
+                <div class="chart-card-premium large">
+                    <canvas id="barChart"></canvas>
+                </div>
+                <div id="monthly-summary" class="summary-details"></div>
+                <div class="spacer-bottom"></div>
+            </div>
+
+            <div id="record-page" class="page-section">
+                <h2 class="page-title">ทำรายการใหม่</h2>
+                <div class="action-grid">
+                    <button class="action-card expense" onclick="openModal('expense')">
+                        <div class="icon-circle"><ion-icon name="trending-down"></ion-icon></div>
+                        <span>รายจ่าย</span>
+                        <small>บันทึกการซื้อของ</small>
+                    </button>
+                    <button class="action-card income" onclick="openModal('income')">
+                        <div class="icon-circle"><ion-icon name="trending-up"></ion-icon></div>
+                        <span>รายรับ</span>
+                        <small>บันทึกเงินเดือน/โบนัส</small>
+                    </button>
+                </div>
+            </div>
+
+            <div id="profile-page" class="page-section">
+                <h2 class="page-title">โปรไฟล์ของฉัน</h2>
+                <div class="profile-container">
+                    <div class="profile-avatar-wrapper" onclick="document.getElementById('imageInput').click()">
+                        <img id="profile-img-display" src="" class="profile-avatar" alt="Profile">
+                        <div class="edit-badge"><ion-icon name="camera"></ion-icon></div>
+                    </div>
+                    <input type="file" id="imageInput" hidden accept="image/*" onchange="changeProfileImage(event)">
+                    
+                    <h3 id="display-name" class="profile-name">Loading...</h3>
+                    
+                    <div class="stats-row">
+                        <div class="stat-box">
+                            <span class="label">รายรับรวม</span>
+                            <strong id="show-income" class="value income">฿0</strong>
+                        </div>
+                        <div class="stat-box">
+                            <span class="label">งบประมาณ</span>
+                            <strong id="show-budget" class="value">฿0</strong>
+                        </div>
+                    </div>
+
+                    <div class="menu-list">
+                        <button class="menu-item" onclick="setFinance()">
+                            <ion-icon name="wallet-outline"></ion-icon> ตั้งค่าการเงิน
+                        </button>
+                        <button class="menu-item" onclick="editName()">
+                            <ion-icon name="person-outline"></ion-icon> แก้ไขชื่อเล่น
+                        </button>
+                        <button class="menu-item danger" onclick="resetAll()">
+                            <ion-icon name="trash-outline"></ion-icon> ล้างข้อมูลทั้งหมด
+                        </button>
+                    </div>
+                </div>
+                <div class="spacer-bottom"></div>
+            </div>
+        </main>
+
+        <nav class="glass-nav">
+            <button class="nav-btn" onclick="changePage('record')">
+                <ion-icon name="add-circle-outline"></ion-icon>
+                <span>บันทึก</span>
+            </button>
+            <button class="nav-btn active" onclick="changePage('home')">
+                <ion-icon name="home"></ion-icon>
+                <span>หน้าหลัก</span>
+            </button>
+            <button class="nav-btn" onclick="changePage('summary')">
+                <ion-icon name="bar-chart-outline"></ion-icon>
+                <span>สรุป</span>
+            </button>
+            <button class="nav-btn" onclick="changePage('profile')">
+                <ion-icon name="person-outline"></ion-icon>
+                <span>ฉัน</span>
+            </button>
+        </nav>
+
+        <div id="addModal" class="modal-backdrop">
+            <div class="modal-card">
+                <div class="modal-header">
+                    <h3 id="modalTitle">เพิ่มรายการ</h3>
+                    <button class="close-btn" onclick="closeModal()"><ion-icon name="close"></ion-icon></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="itemType" value="expense">
+                    
+                    <div class="input-group">
+                        <label>จำนวนเงิน</label>
+                        <input type="number" id="itemAmount" placeholder="0.00" class="input-lg" inputmode="decimal">
+                    </div>
+
+                    <div class="input-group">
+                        <label>ชื่อรายการ</label>
+                        <input type="text" id="itemName" placeholder="เช่น ค่ากาแฟ, ค่ารถ">
+                    </div>
+
+                    <div id="category-wrapper">
+                        <label>หมวดหมู่</label>
+                        <div class="category-grid">
+                            </div>
+                        <input type="hidden" id="itemCategory" value="0">
+                    </div>
+
+                    <button class="btn-save-main" onclick="saveData()">บันทึกข้อมูล</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+</body>
+</html>
